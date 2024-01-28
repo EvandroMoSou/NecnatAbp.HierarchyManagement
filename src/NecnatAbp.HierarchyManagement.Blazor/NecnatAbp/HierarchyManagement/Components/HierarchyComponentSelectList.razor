@@ -1,0 +1,100 @@
+﻿@using Microsoft.Extensions.Localization
+@using NecnatAbp.HierarchyManagement
+@using global::NecnatAbp.HierarchyManagement.Localization
+@inject IStringLocalizer<HierarchyManagementResource> LL
+
+@if (HierarchyComponentTypeList != null)
+{
+    <Fields>
+        <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+            <FieldLabel>@LL["Hierarchy Component Type"]</FieldLabel>
+            <Select TValue="int?" @bind-SelectedValue="@SelectedHierarchyComponentTypeId">
+                <SelectItem Value="default(int?)">@LL["Select..."]</SelectItem>
+                @foreach (var iHierarchyComponentType in HierarchyComponentTypeList)
+                {
+                    <SelectItem Value="@iHierarchyComponentType.Id">@iHierarchyComponentType.Name</SelectItem>
+                }
+            </Select>
+        </Field>
+        @if (filteredHierarchyComponentList != null)
+        {
+            <Field ColumnSize="ColumnSize.Is8.OnDesktop">
+                <FieldLabel>@LL["Hierarchy Component"]</FieldLabel>
+                <Select TValue="Guid?" @bind-SelectedValue="@SelectedHierarchyComponentId">
+                    <SelectItem Value="default(Guid?)">@LL["Select..."]</SelectItem>
+                    @foreach (var iHierarchyComponent in filteredHierarchyComponentList)
+                    {
+                        <SelectItem Value="@iHierarchyComponent.Id">@iHierarchyComponent.Name</SelectItem>
+                    }
+                </Select>
+            </Field>
+        }
+    </Fields>
+}
+
+@namespace NecnatAbp.HierarchyManagement.Components
+@code {
+
+    [Parameter]
+    public HierarchyComponentDto? SelectedHierarchyComponent { get; set; }
+
+    [Parameter]
+    public EventCallback<HierarchyComponentDto?> SelectedHierarchyComponentChanged { get; set; }
+
+    [Parameter]
+    public List<HierarchyComponentTypeDto>? HierarchyComponentTypeList { get; set; }
+
+    [Parameter]
+    public List<HierarchyComponentDto>? HierarchyComponentList { get; set; }
+
+    int? _selectedHierarchyComponentTypeId;
+    int? SelectedHierarchyComponentTypeId
+    {
+        get => _selectedHierarchyComponentTypeId;
+        set
+        {
+            if (_selectedHierarchyComponentTypeId == value)
+                return;
+
+            _selectedHierarchyComponentTypeId = value;
+            SelectedHierarchyComponentTypeIdChanged();
+        }
+    }
+
+    Guid? _selectedHierarchyComponentId;
+    Guid? SelectedHierarchyComponentId
+    {
+        get => _selectedHierarchyComponentId;
+        set
+        {
+            if (_selectedHierarchyComponentId == value)
+                return;
+
+            _selectedHierarchyComponentId = value;
+            SelectedHierarchyComponentIdChanged();
+        }
+    }
+
+    List<HierarchyComponentDto>? filteredHierarchyComponentList;
+
+    protected void SelectedHierarchyComponentTypeIdChanged()
+    {
+        if (_selectedHierarchyComponentTypeId != null && HierarchyComponentList != null)
+            filteredHierarchyComponentList = HierarchyComponentList.Where(x => x.HierarchyComponentType == _selectedHierarchyComponentTypeId).ToList();
+        else
+            filteredHierarchyComponentList = null;
+
+        SelectedHierarchyComponentId = null;
+    }
+
+    protected void SelectedHierarchyComponentIdChanged()
+    {
+        SelectedHierarchyComponent = HierarchyComponentList!.Where(x => x.Id == _selectedHierarchyComponentId).FirstOrDefault();
+        SelectedHierarchyComponentChanged.InvokeAsync(SelectedHierarchyComponent);
+    }
+
+    public void Clear()
+    {
+        SelectedHierarchyComponentTypeId = null;
+    }
+}

@@ -1,0 +1,125 @@
+﻿@using Blazorise.TreeView
+@using Microsoft.Extensions.Localization
+@using NecnatAbp.AppServices
+@using NecnatAbp.HierarchyManagement
+@using NecnatAbp.HierarchyManagement.Components
+@using Volo.Abp.Application.Dtos
+@using global::NecnatAbp.HierarchyManagement.Localization
+@inject IStringLocalizer<HierarchyManagementResource> LL
+@inject IHierarchyAppService HierarchyAppService
+@inject IHierarchicalStructureAppService AppService
+
+@if (HierarchySupportList != null)
+{
+    <Fields>
+        <Field ColumnSize="ColumnSize.Is12.OnDesktop">
+            <FieldLabel>@LL["Hierarchy"]</FieldLabel>
+            <HierarchySelectList @bind-SelectedValue="@InternalSelectedHierarchy" Data="HierarchySupportList" />
+        </Field>
+    </Fields>
+}
+<hr class="my-3" />
+@if (SelectedHierarchy != null)
+{
+    <Fields>
+        @if (hierarchicalStructureNodeList != null && hierarchicalStructureNodeList.Count > 0)
+        {
+            <TreeView @ref="@treeViewRef" Nodes="hierarchicalStructureNodeList"
+                      GetChildNodes="@(item => item.Children)"
+                      HasChildNodes="@(item => item.Children?.Any() == true)">
+                <NodeContent>
+                    @if (NodeContent != null)
+                    {
+                        @NodeContent(context)
+                    }
+                </NodeContent>
+            </TreeView>
+            <div class="div-float-buttons">
+                <Button Class="float-end ms-1" Color="Color.Primary" Outline Clicked="@(()=>treeViewRef!.ExpandAll())">Expandir Todos</Button>
+                 <Button Class="float-end" Color="Color.Secondary" Clicked="@(()=>treeViewRef!.CollapseAll())">Retrair Todos</Button>
+             </div>
+        }
+        else
+        {
+            @EmptyContent
+        }
+    </Fields>
+}
+
+@namespace NecnatAbp.HierarchyManagement.Components
+@code {
+
+    [Parameter]
+    public RenderFragment<HierarchicalStructureNode>? NodeContent { get; set; }
+
+    [Parameter]
+    public RenderFragment? EmptyContent { get; set; }
+
+    [Parameter]
+    public HierarchyDto? SelectedHierarchy { get; set; }
+
+    [Parameter]
+    public EventCallback<HierarchyDto?> SelectedHierarchyChanged { get; set; }
+
+    HierarchyDto? _internalSelectedHierarchy;
+    HierarchyDto? InternalSelectedHierarchy
+    {
+        get => _internalSelectedHierarchy;
+        set
+        {
+            if (_internalSelectedHierarchy == value)
+                return;
+
+            _internalSelectedHierarchy = value;
+            InvokeAsync(InternalSelectedHierarchyIdChanged);
+        }
+    }
+
+    TreeView<HierarchicalStructureNode>? treeViewRef;
+    List<HierarchicalStructureNode> hierarchicalStructureNodeList = new List<HierarchicalStructureNode>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSupportListsAsync();
+
+        await base.OnInitializedAsync();
+    }
+
+    protected async Task InternalSelectedHierarchyIdChanged()
+    {
+        if (_internalSelectedHierarchy == null)
+            hierarchicalStructureNodeList = new List<HierarchicalStructureNode>();
+        else
+        {
+            var pagedResultDto = await AppService.SearchAsync(new HierarchicalStructureResultRequestDto { IsPaged = false, HierarchyId = _internalSelectedHierarchy.Id });
+            var items = pagedResultDto.Items.ToList();
+
+            hierarchicalStructureNodeList = new List<HierarchicalStructureNode> { new HierarchicalStructureNode(items, items.Where(x => x.ParentId == null).First().Id) };
+        }
+
+        SelectedHierarchy = _internalSelectedHierarchy;
+        await SelectedHierarchyChanged.InvokeAsync(SelectedHierarchy);
+
+        await InvokeAsync(StateHasChanged);
+        await treeViewRef!.ExpandAll();
+        await treeViewRef!.ExpandAll();
+    }
+
+    public async Task RefreshAsync()
+    {
+        await InternalSelectedHierarchyIdChanged();
+    }
+
+    #region SupportList
+
+    [Parameter]
+    public List<HierarchyDto>? HierarchySupportList { get; set; }
+
+    protected async Task LoadSupportListsAsync()
+    {
+        if (HierarchySupportList == null)
+            HierarchySupportList = (await ((ICrudsAppService<HierarchyDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateHierarchyDto, HierarchyResultRequestDto>)HierarchyAppService).SearchAsync(new HierarchyResultRequestDto { IsPaged = false })).Items.ToList();
+    }
+
+    #endregion
+}

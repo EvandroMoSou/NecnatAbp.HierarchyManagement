@@ -1,0 +1,56 @@
+﻿@using Microsoft.Extensions.Localization
+@using NecnatAbp.Components
+@using NecnatAbp.HierarchyManagement
+@using global::NecnatAbp.HierarchyManagement.Localization
+@inject IStringLocalizer<HierarchyManagementResource> L
+@inject AbpBlazorMessageLocalizerHelper<HierarchyManagementResource> LH
+
+@if (Entity == null)
+{
+    <div class="spinner-page">
+        <div class="spinner-container">
+            <div class="spinner">
+                <div class="double-bounce1"></div>
+                <div class="double-bounce2"></div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <Validations @ref="@ValidationsRef" Model="@Entity" ValidateOnLoad="false">
+        <Fields>
+            <Validation MessageLocalizer="@LH.Localize">
+                <Field ColumnSize="ColumnSize.Is10.OnDesktop">
+                    <FieldLabel>@L["Name"]</FieldLabel>
+                    <TextEdit @bind-Text="Entity!.Name">
+                        <Feedback>
+                            <ValidationError />
+                        </Feedback>
+                    </TextEdit>
+                </Field>
+            </Validation>
+            <Validation MessageLocalizer="@LH.Localize">
+                <Field ColumnSize="ColumnSize.Is2.OnDesktop">
+                    <FieldLabel>@L["IsActive"]</FieldLabel>
+                    <Check TValue="bool" @bind-Checked="@Entity!.IsActive">
+                        <Feedback>
+                            <ValidationError />
+                        </Feedback>
+                    </Check>
+                </Field>
+            </Validation>
+        </Fields>
+    </Validations>
+}
+
+@namespace NecnatAbp.HierarchyManagement.Components
+@code {
+
+    [Parameter]
+    public Validations? ValidationsRef { get; set; }
+
+    [Parameter]
+    public CreateUpdateHierarchyComponentGroupDto? Entity { get; set; }
+
+}

@@ -1,0 +1,111 @@
+{
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {},
+      "host": {}
+    }
+  },
+  "packages": {
+    "NecnatAbp.HierarchyManagement.Domain.Shared": {
+      "path": "src/NecnatAbp.HierarchyManagement.Domain.Shared/NecnatAbp.HierarchyManagement.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "NecnatAbp.HierarchyManagement.Domain": {
+      "path": "src/NecnatAbp.HierarchyManagement.Domain/NecnatAbp.HierarchyManagement.Domain.abppkg",
+      "folder": "src"
+    },
+    "NecnatAbp.HierarchyManagement.Application.Contracts": {
+      "path": "src/NecnatAbp.HierarchyManagement.Application.Contracts/NecnatAbp.HierarchyManagement.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "NecnatAbp.HierarchyManagement.Application": {
+      "path": "src/NecnatAbp.HierarchyManagement.Application/NecnatAbp.HierarchyManagement.Application.abppkg",
+      "folder": "src"
+    },
+    "NecnatAbp.HierarchyManagement.EntityFrameworkCore": {
+      "path": "src/NecnatAbp.HierarchyManagement.EntityFrameworkCore/NecnatAbp.HierarchyManagement.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "NecnatAbp.HierarchyManagement.MongoDB": {
+      "path": "src/NecnatAbp.HierarchyManagement.MongoDB/NecnatAbp.HierarchyManagement.MongoDB.abppkg",
+      "folder": "src"
+    },
+    "NecnatAbp.HierarchyManagement.HttpApi": {
+      "path": "src/NecnatAbp.HierarchyManagement.HttpApi/NecnatAbp.HierarchyManagement.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "NecnatAbp.HierarchyManagement.HttpApi.Client": {
+      "path": "src/NecnatAbp.HierarchyManagement.HttpApi.Client/NecnatAbp.HierarchyManagement.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "NecnatAbp.HierarchyManagement.TestBase": {
+      "path": "test/NecnatAbp.HierarchyManagement.TestBase/NecnatAbp.HierarchyManagement.TestBase.abppkg",
+      "folder": "test"
+    },
+    "NecnatAbp.HierarchyManagement.EntityFrameworkCore.Tests": {
+      "path": "test/NecnatAbp.HierarchyManagement.EntityFrameworkCore.Tests/NecnatAbp.HierarchyManagement.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "NecnatAbp.HierarchyManagement.MongoDB.Tests": {
+      "path": "test/NecnatAbp.HierarchyManagement.MongoDB.Tests/NecnatAbp.HierarchyManagement.MongoDB.Tests.abppkg",
+      "folder": "test"
+    },
+    "NecnatAbp.HierarchyManagement.Domain.Tests": {
+      "path": "test/NecnatAbp.HierarchyManagement.Domain.Tests/NecnatAbp.HierarchyManagement.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "NecnatAbp.HierarchyManagement.Application.Tests": {
+      "path": "test/NecnatAbp.HierarchyManagement.Application.Tests/NecnatAbp.HierarchyManagement.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "NecnatAbp.HierarchyManagement.HttpApi.Host": {
+      "path": "host/NecnatAbp.HierarchyManagement.HttpApi.Host/NecnatAbp.HierarchyManagement.HttpApi.Host.abppkg",
+      "folder": "host"
+    },
+    "NecnatAbp.HierarchyManagement.Web": {
+      "path": "src/NecnatAbp.HierarchyManagement.Web/NecnatAbp.HierarchyManagement.Web.abppkg",
+      "folder": "src"
+    },
+    "NecnatAbp.HierarchyManagement.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/NecnatAbp.HierarchyManagement.HttpApi.Client.ConsoleTestApp/NecnatAbp.HierarchyManagement.HttpApi.Client.ConsoleTestApp.abppkg",
+      "folder": "test"
+    },
+    "NecnatAbp.HierarchyManagement.Web.Host": {
+      "path": "host/NecnatAbp.HierarchyManagement.Web.Host/NecnatAbp.HierarchyManagement.Web.Host.abppkg",
+      "folder": "host"
+    },
+    "NecnatAbp.HierarchyManagement.AuthServer": {
+      "path": "host/NecnatAbp.HierarchyManagement.AuthServer/NecnatAbp.HierarchyManagement.AuthServer.abppkg",
+      "folder": "host"
+    },
+    "NecnatAbp.HierarchyManagement.Host.Shared": {
+      "path": "host/NecnatAbp.HierarchyManagement.Host.Shared/NecnatAbp.HierarchyManagement.Host.Shared.abppkg",
+      "folder": "host"
+    },
+    "NecnatAbp.HierarchyManagement.Web.Unified": {
+      "path": "host/NecnatAbp.HierarchyManagement.Web.Unified/NecnatAbp.HierarchyManagement.Web.Unified.abppkg",
+      "folder": "host"
+    },
+    "NecnatAbp.HierarchyManagement.Blazor": {
+      "path": "src/NecnatAbp.HierarchyManagement.Blazor/NecnatAbp.HierarchyManagement.Blazor.abppkg",
+      "folder": "src"
+    },
+    "NecnatAbp.HierarchyManagement.Blazor.Host": {
+      "path": "host/NecnatAbp.HierarchyManagement.Blazor.Host/NecnatAbp.HierarchyManagement.Blazor.Host.abppkg",
+      "folder": "host"
+    },
+    "NecnatAbp.HierarchyManagement.Blazor.Server": {
+      "path": "src/NecnatAbp.HierarchyManagement.Blazor.Server/NecnatAbp.HierarchyManagement.Blazor.Server.abppkg",
+      "folder": "src"
+    },
+    "NecnatAbp.HierarchyManagement.Blazor.WebAssembly": {
+      "path": "src/NecnatAbp.HierarchyManagement.Blazor.WebAssembly/NecnatAbp.HierarchyManagement.Blazor.WebAssembly.abppkg",
+      "folder": "src"
+    },
+    "NecnatAbp.HierarchyManagement.Blazor.Server.Host": {
+      "path": "host/NecnatAbp.HierarchyManagement.Blazor.Server.Host/NecnatAbp.HierarchyManagement.Blazor.Server.Host.abppkg",
+      "folder": "host"
+    }
+  }
+}

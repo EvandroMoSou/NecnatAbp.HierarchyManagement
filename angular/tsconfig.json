@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.prod.json",
+  "compilerOptions": {
+    "paths": {
+      "@necnat-abp/hierarchy-management": [
+        "projects/hierarchy-management/src/public-api.ts"
+      ],
+      "@necnat-abp/hierarchy-management/config": [
+        "projects/hierarchy-management/config/src/public-api.ts"
+      ],
+      "@proxy": ["projects/hierarchy-management/src/lib/proxy/index.ts"],
+      "@proxy/*": ["projects/hierarchy-management/src/lib/proxy/*"]
+    }
+  }
+}

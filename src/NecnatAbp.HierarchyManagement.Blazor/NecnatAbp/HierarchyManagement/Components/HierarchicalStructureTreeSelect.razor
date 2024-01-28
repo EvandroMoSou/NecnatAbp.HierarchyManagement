@@ -1,0 +1,160 @@
+﻿@using Microsoft.Extensions.Localization
+@using NecnatAbp.AppServices
+@using NecnatAbp.HierarchyManagement
+@using Volo.Abp.Application.Dtos
+@using Volo.Abp.AspNetCore.Components
+@using global::NecnatAbp.HierarchyManagement.Localization
+@inherits AbpComponentBase
+@inject IStringLocalizer<HierarchyManagementResource> LL
+@inject IHierarchyAppService HierarchyAppService
+@inject IHierarchicalStructureAppService AppService
+
+<TextEdit Class="inline-with-icon-button" @bind-Value="_selectedHierarchicalStructureString" Disabled="true" />
+<Button Color="Color.Primary" Clicked="@OpenSelectModalAsync"><i class="fas fa-search"></i></Button>
+
+<Modal @ref="@SelectModal">
+    <ModalContent Size="ModalSize.ExtraLarge" Centered="true">
+        <Form>
+            <ModalHeader>
+                <ModalTitle>@LL["Select"] @LL["HierarchicalStructure"]</ModalTitle>
+                <CloseButton Clicked="CloseSelectModalAsync" />
+            </ModalHeader>
+            <ModalBody>
+                @if (HierarchySupportList != null)
+                {
+                    <HierarchicalStructureTree HierarchySupportList="HierarchySupportList">
+                        <NodeContent>
+                            @if (context.HierarchyComponentType == null || HierarchyComponentTypeSupportList! == null || (!HierarchyComponentTypeSupportList!.Any(x => x.Id == context.HierarchyComponentType)))
+                            {
+                                <i class="fas fa-star-of-life"></i>
+                            }
+                            else
+                            {
+                                <i class="@HierarchyComponentTypeSupportList!.Where(x => x.Id == context.HierarchyComponentType).First().Icon"></i>
+                            }
+                            <Span Class="ps-1">
+                                @(HierarchyComponentSupportList!.Where(x => x.HierarchyComponentType == context.HierarchyComponentType && x.Id == @context.HierarchyComponentId).FirstOrDefault()?.Name)
+                            </Span>
+                            @if (AllowedHierarchicalStructureIdList == null || AllowedHierarchicalStructureIdList.Contains(context.Id))
+                            {
+                                <Icon Class="ps-1" Name="Blazorise.Icons.FontAwesome.FontAwesomeIcons.CheckCircle" Clicked="@(async () => await SelectHierarchicalStructureAsync(context))" />
+                            }
+                        </NodeContent>
+                        <EmptyContent>
+                            <span class="page-text pl-4">@LL["This Hierarchy has no components."]</span>
+                        </EmptyContent>
+                    </HierarchicalStructureTree>
+                }
+            </ModalBody>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@namespace NecnatAbp.HierarchyManagement.Components
+@code {
+
+    [Parameter]
+    public HierarchicalStructureDto? SelectedValue { get; set; }
+
+    [Parameter]
+    public EventCallback<HierarchicalStructureDto?> SelectedValueChanged { get; set; }
+
+    string? _selectedHierarchicalStructureString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSupportListsAsync();
+
+        if (SelectedValue != null)
+        {
+            var getOutputDto = await AppService!.GetAsync(SelectedValue.Id);
+            await SelectHierarchicalStructureAsync(getOutputDto);
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    protected virtual async Task SelectHierarchicalStructureAsync(HierarchicalStructureNode hierarchicalStructureNode)
+    {
+        var hierarchicalStructure = new HierarchicalStructureDto();
+        hierarchicalStructure.Id = hierarchicalStructureNode.Id;
+        hierarchicalStructure.ParentId = hierarchicalStructureNode.ParentId;
+        hierarchicalStructure.HierarchyId = hierarchicalStructureNode.HierarchyId;
+        hierarchicalStructure.HierarchyComponentType = hierarchicalStructureNode.HierarchyComponentType;
+        hierarchicalStructure.HierarchyComponentId = hierarchicalStructureNode.HierarchyComponentId;
+
+        await SelectHierarchicalStructureAsync(hierarchicalStructure);
+    }
+
+    protected virtual async Task SelectHierarchicalStructureAsync(HierarchicalStructureDto hierarchicalStructureDto)
+    {
+        _selectedHierarchicalStructureString = HierarchyComponentSupportList!.Where(x => x.Id == hierarchicalStructureDto.HierarchyComponentId).First().Name;
+
+        SelectedValue = hierarchicalStructureDto;
+        await SelectedValueChanged.InvokeAsync(SelectedValue);
+
+        await CloseSelectModalAsync();
+    }
+
+    #region SelectModal
+
+    protected Modal? SelectModal;
+    HierarchyComponentDto hierarchyComponent = new HierarchyComponentDto();
+
+    protected virtual async Task OpenSelectModalAsync()
+    {
+        try
+        {
+            // Mapper will not notify Blazor that binded values are changed
+            // so we need to notify it manually by calling StateHasChanged
+            await InvokeAsync(async () =>
+            {
+                StateHasChanged();
+                if (SelectModal != null)
+                {
+                    await SelectModal.Show();
+                }
+
+            });
+        }
+        catch (Exception ex)
+        {
+            await HandleErrorAsync(ex);
+        }
+    }
+
+    protected virtual async Task CloseSelectModalAsync()
+    {
+        await InvokeAsync(SelectModal!.Hide);
+    }
+
+    #endregion
+
+    #region SupportList
+
+    [Parameter]
+    public List<Guid>? AllowedHierarchicalStructureIdList { get; set; }
+
+    [Parameter]
+    public List<HierarchyDto>? HierarchySupportList { get; set; }
+
+    [Parameter]
+    public List<HierarchyComponentTypeDto>? HierarchyComponentTypeSupportList { get; set; }
+
+    [Parameter]
+    public List<HierarchyComponentDto>? HierarchyComponentSupportList { get; set; }
+
+    protected async Task LoadSupportListsAsync()
+    {
+        if (HierarchySupportList == null)
+            HierarchySupportList = (await ((ICrudsAppService<HierarchyDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateHierarchyDto, HierarchyResultRequestDto>)HierarchyAppService).SearchAsync(new HierarchyResultRequestDto { IsPaged = false })).Items.ToList();
+
+        if (HierarchyComponentTypeSupportList == null)
+            HierarchyComponentTypeSupportList = await AppService!.ListHierarchyComponentTypeAsync();
+
+        if (HierarchyComponentSupportList == null)
+            HierarchyComponentSupportList = await AppService!.ListHierarchyComponentAsync();
+    }
+
+    #endregion
+}

@@ -1,0 +1,128 @@
+﻿@using Microsoft.Extensions.Localization
+@using NecnatAbp.Components
+@using NecnatAbp.HierarchyManagement
+@using Volo.Abp.Identity
+@using global::NecnatAbp.HierarchyManagement.Localization
+@inject AbpBlazorMessageLocalizerHelper<HierarchyManagementResource> LH
+@inject IStringLocalizer<HierarchyManagementResource> L
+@inject IHierarchyAutorizationService HierarchyAutorizationService
+
+@if (Entity == null)
+{
+    <div class="spinner-page">
+        <div class="spinner-container">
+            <div class="spinner">
+                <div class="double-bounce1"></div>
+                <div class="double-bounce2"></div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <Validations @ref="@ValidationsRef" Model="@Entity" ValidateOnLoad="false">
+        <Fields>
+            <Field ColumnSize="ColumnSize.Is6.OnDesktop">
+                <FieldLabel>@L["User"]</FieldLabel>
+                <UserAutocomplete @bind-SelectedValue="IdentityUserDtoAutocomplete" />
+                <ValidationError />
+            </Field>
+            <Field ColumnSize="ColumnSize.Is6.OnDesktop">
+                <FieldLabel>@L["Role"]</FieldLabel>
+                <RoleSelectList @bind-SelectedValue="IdentityRoleDtoAutocomplete" />
+            </Field>
+            <Field ColumnSize="ColumnSize.Is12.OnDesktop">
+                <FieldLabel>@L["Hierarchical Structure"]</FieldLabel>
+                <HierarchicalStructureTreeSelect @bind-SelectedValue="HierarchicalStructureDtoTreeSelect" AllowedHierarchicalStructureIdList="_allowedHierarchicalStructureIdList" />
+            </Field>
+        </Fields>
+    </Validations>
+}
+
+@namespace NecnatAbp.HierarchyManagement.Components
+@code {
+
+    [Parameter]
+    public Validations? ValidationsRef { get; set; }
+
+    [Parameter]
+    public CreateUpdateUserRoleHierarchicalStructureDto? Entity { get; set; }
+
+    IdentityUserDto? _identityUserDtoAutocomplete;
+    protected IdentityUserDto? IdentityUserDtoAutocomplete
+    {
+        get => _identityUserDtoAutocomplete;
+        set
+        {
+            if (_identityUserDtoAutocomplete == value)
+                return;
+
+            _identityUserDtoAutocomplete = value;
+            Entity!.UserId = _identityUserDtoAutocomplete?.Id ?? Guid.Empty;
+        }
+    }
+
+    IdentityRoleDto? _identityRoleDtoAutocomplete;
+    protected IdentityRoleDto? IdentityRoleDtoAutocomplete
+    {
+        get => _identityRoleDtoAutocomplete;
+        set
+        {
+            if (_identityRoleDtoAutocomplete == value)
+                return;
+
+            _identityRoleDtoAutocomplete = value;
+            Entity!.RoleId = _identityRoleDtoAutocomplete?.Id ?? Guid.Empty;
+        }
+    }
+
+    HierarchicalStructureDto? _hierarchicalStructureDtoTreeSelect;
+    protected HierarchicalStructureDto? HierarchicalStructureDtoTreeSelect
+    {
+        get => _hierarchicalStructureDtoTreeSelect;
+        set
+        {
+            if (_hierarchicalStructureDtoTreeSelect == value)
+                return;
+
+            _hierarchicalStructureDtoTreeSelect = value;
+            Entity!.HierarchicalStructureId = _hierarchicalStructureDtoTreeSelect?.Id;
+        }
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (Entity != null)
+        {
+            if (Entity.UserId != Guid.Empty)
+                IdentityUserDtoAutocomplete = new IdentityUserDto { Id = Entity.UserId };
+
+            if (Entity.RoleId != Guid.Empty)
+                IdentityRoleDtoAutocomplete = new IdentityRoleDto { Id = Entity.RoleId };
+
+            if (Entity.HierarchicalStructureId != null)
+                HierarchicalStructureDtoTreeSelect = new HierarchicalStructureDto { Id = (Guid)Entity.HierarchicalStructureId };
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    #region SupportList
+
+    [Parameter]
+    public string? HierarchicalStructureTreePermissionFilter { get; set; }
+
+    List<Guid>? _allowedHierarchicalStructureIdList;
+
+    protected async Task LoadSupportListsAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(HierarchicalStructureTreePermissionFilter))
+        {
+            await HierarchyAutorizationService.InitializeAsync();
+            _allowedHierarchicalStructureIdList = HierarchyAutorizationService.AllowedHierarchicalStructureIdList(HierarchicalStructureTreePermissionFilter);
+        }
+    }
+
+    #endregion
+
+}

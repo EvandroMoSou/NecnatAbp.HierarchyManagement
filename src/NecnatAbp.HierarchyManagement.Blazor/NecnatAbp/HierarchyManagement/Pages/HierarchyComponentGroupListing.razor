@@ -1,0 +1,57 @@
+﻿@page "/HierarchyManagement/HierarchyComponentGroup/Listing"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@using NecnatAbp.HierarchyManagement
+@using NecnatAbp.HierarchyManagement.Components
+@using NecnatAbp.HierarchyManagement.Permissions
+@using NecnatAbp.PageBases
+@using Volo.Abp.Application.Dtos
+@using Volo.Abp.BlazoriseUI.Components
+@using global::NecnatAbp.HierarchyManagement.Localization
+@inject IStringLocalizer<HierarchyManagementResource> LL
+@attribute [Authorize(HierarchyManagementPermissions.HierarchyComponentGroup.Default)]
+@inherits ListingPageBase<HierarchyComponentGroupSearch, IHierarchyComponentGroupAppService, HierarchyComponentGroupDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateHierarchyComponentGroupDto, HierarchyComponentGroupResultRequestDto>
+
+<div class="container">
+    <div class="page-title">@LL["Hierarchy Component Groups"]</div>
+    <HierarchyComponentGroupSearch @ref="SearchComponent">
+        <DataGridEntityActionsColumn TItem="HierarchyComponentGroupDto">
+            <DisplayTemplate>
+                <EntityActions TItem="HierarchyComponentGroupDto">
+                    <EntityAction TItem="HierarchyComponentGroupDto"
+                                  Text="@LL["Edit"]"
+                                  Visible=HasUpdatePermission
+                                  Clicked="() => ToUpdatePage(context)" />
+                    <EntityAction TItem="HierarchyComponentGroupDto"
+                                  Text="@LL["Delete"]"
+                                  Visible=HasDeletePermission
+                                  Clicked="() => DeleteEntityAsync(context)"
+                                  ConfirmationMessage="() => GetDeleteConfirmationMessage(context)" />
+                </EntityActions>
+            </DisplayTemplate>
+        </DataGridEntityActionsColumn>
+    </HierarchyComponentGroupSearch>
+    <div class="div-float-buttons">
+        <Button Class="float-end" Color="Color.Primary" Clicked="@ToCreatePage">@LL["Create"]</Button>
+    </div>
+</div>
+
+@namespace NecnatAbp.HierarchyManagement.Pages
+@code {
+
+    public HierarchyComponentGroupListing()
+    {
+        ListingPageUri = "/HierarchyManagement/HierarchyComponentGroup/Listing";
+        CreatePageUri = "/HierarchyManagement/HierarchyComponentGroup/Maintain";
+        UpdatePageUri = "/HierarchyManagement/HierarchyComponentGroup/Maintain";
+
+        CreatePolicyName = HierarchyManagementPermissions.HierarchyComponentGroup.Create;
+        UpdatePolicyName = HierarchyManagementPermissions.HierarchyComponentGroup.Update;
+        DeletePolicyName = HierarchyManagementPermissions.HierarchyComponentGroup.Delete;
+    }
+
+    protected virtual string GetDeleteConfirmationMessage(HierarchyComponentGroupDto entity)
+    {
+        return L["Are you sure you want to delete this record?"];
+    }
+}

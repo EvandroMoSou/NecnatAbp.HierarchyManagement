@@ -1,0 +1,24 @@
+﻿@using Blazorise.Components
+@using Microsoft.Extensions.Localization
+@using NecnatAbp.AppServices
+@using NecnatAbp.HierarchyManagement
+@using Volo.Abp.Application.Dtos
+@using Volo.Abp.Identity
+@using NecnatAbp.ComponentBases
+@using global::NecnatAbp.HierarchyManagement.Localization
+@inject IStringLocalizer<HierarchyManagementResource> LL
+@inherits SelectListComponentBase<IdentityRoleDto, Guid, INecnatRoleAppService, NecnatRoleResultRequestDto>
+
+<SelectList TItem="IdentityRoleDto"
+            TValue="Guid"
+            Data="@Data"
+            TextField="@((item)=>item.Name)"
+            ValueField="@((item)=>item.Id)"
+            @bind-SelectedValue="@InternalSelectedValue"
+            DefaultItemText="@LL["Select..."]"
+            DefaultItemValue="Guid.Empty" />
+
+@namespace NecnatAbp.HierarchyManagement.Components
+@code {
+
+}

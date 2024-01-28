@@ -1,0 +1,59 @@
+﻿@page "/HierarchyManagement/HierarchyComponentGroup/Maintain"
+@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.Extensions.Localization
+@using NecnatAbp.PageBases
+@using NecnatAbp.HierarchyManagement
+@using NecnatAbp.HierarchyManagement.Components
+@using NecnatAbp.HierarchyManagement.Permissions
+@using Volo.Abp.Application.Dtos
+@using global::NecnatAbp.HierarchyManagement.Localization
+@inject IStringLocalizer<HierarchyManagementResource> LL
+@inherits CreateUpdatePageBase<IHierarchyComponentGroupAppService, HierarchyComponentGroupDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateHierarchyComponentGroupDto, HierarchyComponentGroupResultRequestDto>
+
+<div class="container">
+    <div class="page-title">@(EntityId == Guid.Empty ? @LL["Create"] : @LL["Edit"]) @LL["Hierarchy Component Groups"]</div>
+    <Card>
+        <CardBody>
+            @if(Entity != null)
+            {
+                <HierarchyComponentGroupCreateUpdate ValidationsRef="@ValidationsRef" Entity="@Entity" />
+            }
+        </CardBody>
+    </Card>
+    <div class="div-float-buttons">
+        <Button Class="float-end" Color="Color.Primary" Clicked="@(EntityId == Guid.Empty ? CreateEntityAsync : UpdateEntityAsync)">Salvar</Button>
+        <Button Class="float-start" Color="Color.Secondary" Outline Clicked="@ToBackPage">Cancelar</Button>
+     </div>
+ </div>
+
+ @namespace NecnatAbp.HierarchyManagement.Pages
+ @code {
+
+    public HierarchyComponentGroupMaintain()
+    {
+        CreatePolicyName = HierarchyManagementPermissions.HierarchyComponentGroup.Create;
+        UpdatePolicyName = HierarchyManagementPermissions.HierarchyComponentGroup.Update;
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        var uri = NavigationManager!.ToAbsoluteUri(NavigationManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("id", out var id))
+        {
+            EntityId = new Guid(id!);
+        }
+
+        if (EntityId != Guid.Empty)
+        {
+            var dto = await AppService!.GetAsync(EntityId);
+            Entity = ObjectMapper.Map<HierarchyComponentGroupDto, CreateUpdateHierarchyComponentGroupDto>(dto);
+        }
+        else
+        {
+            Entity = new CreateUpdateHierarchyComponentGroupDto();
+            Entity.IsActive = true;
+        }
+
+        await base.OnInitializedAsync();
+    }
+}

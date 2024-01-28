@@ -1,0 +1,60 @@
+﻿@page "/HierarchyManagement/Hierarchy/Maintain"
+@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.Extensions.Localization
+@using NecnatAbp.PageBases
+@using NecnatAbp.AppServices
+@using NecnatAbp.HierarchyManagement
+@using NecnatAbp.HierarchyManagement.Components
+@using NecnatAbp.HierarchyManagement.Permissions
+@using Volo.Abp.Application.Dtos
+@using global::NecnatAbp.HierarchyManagement.Localization
+@inherits CreateUpdatePageBase<IHierarchyAppService, HierarchyDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateHierarchyDto, HierarchyResultRequestDto>
+@inject IStringLocalizer<HierarchyManagementResource> LL
+
+<div class="container">
+    <div class="page-title">@(EntityId == Guid.Empty ? @LL["Create"] : @LL["Edit"]) @LL["Hierarchy"]</div>
+    <Card>
+        <CardBody>
+            @if(Entity != null)
+            {
+                <HierarchyCreateUpdate ValidationsRef="@ValidationsRef" Entity="@Entity" />
+            }
+        </CardBody>
+    </Card>
+    <div class="div-float-buttons">
+        <Button Class="float-end" Color="Color.Primary" Clicked="@(EntityId == Guid.Empty ? CreateEntityAsync : UpdateEntityAsync)">Salvar</Button>
+        <Button Class="float-start" Color="Color.Secondary" Outline Clicked="@ToBackPage">Cancelar</Button>
+     </div>
+ </div>
+
+ @namespace NecnatAbp.HierarchyManagement.Pages
+ @code {
+
+    public HierarchyMaintain()
+    {
+        CreatePolicyName = HierarchyManagementPermissions.Hierarchy.Create;
+        UpdatePolicyName = HierarchyManagementPermissions.Hierarchy.Update;
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        var uri = NavigationManager!.ToAbsoluteUri(NavigationManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("id", out var id))
+        {
+            EntityId = new Guid(id!);
+        }
+
+        if (EntityId != Guid.Empty)
+        {
+            var dto = await ((ICrudsAppService<HierarchyDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateHierarchyDto, HierarchyResultRequestDto>)AppService!).GetAsync(EntityId);
+            Entity = ObjectMapper.Map<HierarchyDto, CreateUpdateHierarchyDto>(dto);
+        }
+        else
+        {
+            Entity = new CreateUpdateHierarchyDto();
+            Entity.IsActive = true;
+        }
+
+        await base.OnInitializedAsync();
+    }
+}

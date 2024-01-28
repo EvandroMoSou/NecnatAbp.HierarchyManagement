@@ -1,0 +1,7 @@
+{
+  "modules": {
+    "NecnatAbp.HierarchyManagement": {
+      "path": "NecnatAbp.HierarchyManagement.abpmdl"
+    }
+  }
+}

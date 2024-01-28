@@ -1,0 +1,229 @@
+﻿@using Microsoft.Extensions.Localization
+@using NecnatAbp.AppServices
+@using NecnatAbp.Components
+@using NecnatAbp.ComponentBases
+@using NecnatAbp.Enums
+@using NecnatAbp.HierarchyManagement
+@using NecnatAbp.HierarchyManagement.Permissions
+@using Volo.Abp.Application.Dtos
+@using Volo.Abp.Identity
+@using global::NecnatAbp.HierarchyManagement.Localization
+@inherits SearchComponentBase<IUserRoleHierarchicalStructureAppService, UserRoleHierarchicalStructureDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateUserRoleHierarchicalStructureDto, UserRoleHierarchicalStructureResultRequestDto>
+@inject IStringLocalizer<HierarchyManagementResource> LL
+@inject INecnatUserAppService UserAppService
+@inject INecnatRoleAppService RoleAppService
+@inject IHierarchyAppService HierarchyAppService
+@inject IHierarchicalStructureAppService HierarchicalStructureAppService
+@inject IHierarchyAutorizationService HierarchyAutorizationService
+
+<Accordion>
+    <Collapse Visible="true">
+        <CollapseHeader>
+            <Heading Size="HeadingSize.Is4">
+                <AccordionToggle>@LL["Filter(s)"]</AccordionToggle>
+            </Heading>
+        </CollapseHeader>
+        <CollapseBody>
+            <Fields>
+                <Field ColumnSize="ColumnSize.Is6.OnDesktop">
+                    <FieldLabel>@LL["User"]</FieldLabel>
+                    <UserAutocomplete @ref="UserAutocomplete" @bind-SelectedValue="IdentityUserDtoAutocomplete" />
+                </Field>
+                @if (RoleSupportList != null)
+                {
+                    <Field ColumnSize="ColumnSize.Is6.OnDesktop">
+                        <FieldLabel>@LL["Role"]</FieldLabel>
+                        <RoleSelectList @ref="RoleSelectList" @bind-SelectedValue="IdentityRoleDtoAutocomplete" Data="RoleSupportList" />
+                    </Field>
+                }
+            </Fields>
+            @if (HierarchySupportList != null && HierarchyComponentTypeSupportList != null && HierarchyComponentSupportList != null)
+            {
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is12.OnDesktop">
+                        <FieldLabel>@LL["Hierarchical Structure"]</FieldLabel>
+                        <HierarchicalStructureTreeSelect @ref="HierarchicalStructureTreeSelect"
+                        @bind-SelectedValue="HierarchicalStructureDtoTreeSelect"
+                                                         AllowedHierarchicalStructureIdList="_allowedHierarchicalStructureIdList"
+                                                         HierarchySupportList="HierarchySupportList"
+                                                         HierarchyComponentTypeSupportList="HierarchyComponentTypeSupportList"
+                                                         HierarchyComponentSupportList="HierarchyComponentSupportList" />
+                    </Field>
+                </Fields>
+            }
+            <div class="div-float-buttons">
+                <Button Class="float-end" Color="Color.Primary" Clicked="@GetEntitiesAsync">@LL["Search"]</Button>
+                <Button Class="float-start" Color="Color.Secondary" Outline Clicked="@ClearAsync">@LL["Clear"]</Button>
+             </div>
+         </CollapseBody>
+     </Collapse>
+ </Accordion>
+ <br />
+ <Card>
+     <CardBody>
+         <DataGrid TItem="UserRoleHierarchicalStructureDto"
+                   Data="Entities"
+                   ReadData="@OnDataGridReadAsync"
+                   TotalItems="TotalCount"
+                   ShowPager="true"
+                   PageSize="PageSize"
+                   SelectionMode="SelectionMode == NnDataGridSelectionMode.Multiple ? DataGridSelectionMode.Multiple : DataGridSelectionMode.Single"
+         @bind-SelectedRow="SelectedRow"
+         @bind-SelectedRows="SelectedRows">
+             <DataGridColumns>
+                 @if (SelectionMode == NnDataGridSelectionMode.Multiple)
+                {
+                    <DataGridCheckColumn Width="30px" Sortable="false" Filterable="false">
+                        <CaptionTemplate>
+                            <Check TValue="bool"
+                                   Checked="@(SelectedRows != null && SelectedRows.Count == TotalCount)"
+                                   Indeterminate="@(SelectedRows != null && SelectedRows.Count > 0 && SelectedRows.Count != TotalCount)"
+                                   CheckedChanged="SelectAllAsync" />
+                        </CaptionTemplate>
+                        <DisplayTemplate>
+                            <Check TValue="bool" Checked="@(SelectedRows != null && SelectedRows.Contains(context!))" Disabled="true" ReadOnly="true" />
+                        </DisplayTemplate>
+                    </DataGridCheckColumn>
+                }
+                else if (SelectionMode == NnDataGridSelectionMode.Single)
+                {
+                    <DataGridCheckColumn Width="30px" Sortable="false" Filterable="false">
+                        <DisplayTemplate>
+                            <Check TValue="bool" Checked="@(SelectedRow == context)" Disabled="true" ReadOnly="true" />
+                        </DisplayTemplate>
+                    </DataGridCheckColumn>
+                }
+                <DataGridColumn TItem="UserRoleHierarchicalStructureDto"
+                                Field="@nameof(UserRoleHierarchicalStructureDto.UserId)"
+                                Caption="@LL["User"]">
+                    <DisplayTemplate>
+                        @context?.UserUserName
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="UserRoleHierarchicalStructureDto"
+                                Field="@nameof(UserRoleHierarchicalStructureDto.RoleId)"
+                                Caption="@LL["Role"]">
+                    <DisplayTemplate>
+                        @RoleSupportList?.Where(x => x.Id == context.RoleId).FirstOrDefault()?.Name
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="UserRoleHierarchicalStructureDto"
+                                Field="@nameof(UserRoleHierarchicalStructureDto.HierarchicalStructureId)"
+                                Caption="@LL["HierarchicalStructure"]">
+                    <DisplayTemplate>
+                        @GetHierarchicalStructureHierarchyComponentName(context.HierarchicalStructureId)
+                    </DisplayTemplate>
+                </DataGridColumn>
+                @ChildContent
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@namespace NecnatAbp.HierarchyManagement.Components
+@code {
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected UserAutocomplete UserAutocomplete = new UserAutocomplete();
+    IdentityUserDto? _identityUserDtoAutocomplete;
+    protected IdentityUserDto? IdentityUserDtoAutocomplete
+    {
+        get => _identityUserDtoAutocomplete;
+        set
+        {
+            if (_identityUserDtoAutocomplete == value)
+                return;
+
+            _identityUserDtoAutocomplete = value;
+            SearchInput!.UserId = _identityUserDtoAutocomplete?.Id;
+        }
+    }
+
+    protected RoleSelectList RoleSelectList = new RoleSelectList();
+    IdentityRoleDto? _identityRoleDtoAutocomplete;
+    protected IdentityRoleDto? IdentityRoleDtoAutocomplete
+    {
+        get => _identityRoleDtoAutocomplete;
+        set
+        {
+            if (_identityRoleDtoAutocomplete == value)
+                return;
+
+            _identityRoleDtoAutocomplete = value;
+            SearchInput!.RoleId = _identityRoleDtoAutocomplete?.Id;
+        }
+    }
+
+    protected HierarchicalStructureTreeSelect HierarchicalStructureTreeSelect = new HierarchicalStructureTreeSelect();
+    HierarchicalStructureDto? _hierarchicalStructureDtoTreeSelect;
+    protected HierarchicalStructureDto? HierarchicalStructureDtoTreeSelect
+    {
+        get => _hierarchicalStructureDtoTreeSelect;
+        set
+        {
+            if (_hierarchicalStructureDtoTreeSelect == value)
+                return;
+
+            _hierarchicalStructureDtoTreeSelect = value;
+            SearchInput!.HierarchicalStructureId = _hierarchicalStructureDtoTreeSelect?.Id;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSupportListsAsync();
+
+        await base.OnInitializedAsync();
+    }
+
+    #region SupportList
+
+    List<Guid>? _allowedHierarchicalStructureIdList;
+
+    [Parameter]
+    public List<IdentityRoleDto>? RoleSupportList { get; set; }
+
+    [Parameter]
+    public List<HierarchyDto>? HierarchySupportList { get; set; }
+
+    [Parameter]
+    public List<HierarchyComponentTypeDto>? HierarchyComponentTypeSupportList { get; set; }
+
+    [Parameter]
+    public List<HierarchyComponentDto>? HierarchyComponentSupportList { get; set; }
+
+    protected async Task LoadSupportListsAsync()
+    {
+        await HierarchyAutorizationService.InitializeAsync();
+        _allowedHierarchicalStructureIdList = HierarchyAutorizationService.AllowedHierarchicalStructureIdList(HierarchyManagementPermissions.UserRoleHierarchicalStructure.Default);
+
+        if (RoleSupportList == null)
+            RoleSupportList = (await ((ICrudsAppService<IdentityRoleDto, Guid, PagedAndSortedResultRequestDto, IdentityRoleDto, NecnatRoleResultRequestDto>)RoleAppService).SearchAsync(new NecnatRoleResultRequestDto { IsPaged = false })).Items.ToList();
+
+        if (HierarchySupportList == null)
+            HierarchySupportList = (await ((ICrudsAppService<HierarchyDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateHierarchyDto, HierarchyResultRequestDto>)HierarchyAppService).SearchAsync(new HierarchyResultRequestDto { IsPaged = false })).Items.ToList();
+
+        if (HierarchyComponentTypeSupportList == null)
+            HierarchyComponentTypeSupportList = await HierarchicalStructureAppService!.ListHierarchyComponentTypeAsync();
+
+        if (HierarchyComponentSupportList == null)
+            HierarchyComponentSupportList = await HierarchicalStructureAppService!.ListHierarchyComponentAsync();
+    }
+
+    protected string? GetHierarchicalStructureHierarchyComponentName(Guid? hierarchicalStructureId)
+    {
+        if (hierarchicalStructureId == null)
+            return LL["All"];
+
+        var hierarchyComponent = HierarchyAutorizationService.GetHierarchyComponentBy((Guid)hierarchicalStructureId);
+        if (hierarchyComponent == null)
+            return LL["Not Found"];
+
+        return HierarchyComponentSupportList?.Where(x => x.HierarchyComponentType == hierarchyComponent.HierarchyComponentType && x.Id == hierarchyComponent.HierarchyComponentId).FirstOrDefault()?.Name;
+    }
+
+    #endregion
+
+}

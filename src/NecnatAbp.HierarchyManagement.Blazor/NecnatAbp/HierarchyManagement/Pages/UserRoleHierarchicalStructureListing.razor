@@ -1,0 +1,57 @@
+﻿@page "/HierarchyManagement/UserRoleHierarchicalStructure/Listing"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@using NecnatAbp.HierarchyManagement
+@using NecnatAbp.HierarchyManagement.Components
+@using NecnatAbp.HierarchyManagement.Permissions
+@using NecnatAbp.PageBases
+@using Volo.Abp.Application.Dtos
+@using Volo.Abp.BlazoriseUI.Components
+@using global::NecnatAbp.HierarchyManagement.Localization
+@inject IStringLocalizer<HierarchyManagementResource> LL
+@attribute [Authorize(HierarchyManagementPermissions.UserRoleHierarchicalStructure.Default)]
+@inherits ListingPageBase<UserRoleHierarchicalStructureSearch, IUserRoleHierarchicalStructureAppService, UserRoleHierarchicalStructureDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateUserRoleHierarchicalStructureDto, UserRoleHierarchicalStructureResultRequestDto>
+
+<div class="container">
+    <div class="page-title">@LL["Hierarchical Access"]</div>
+    <UserRoleHierarchicalStructureSearch @ref="SearchComponent">
+        <DataGridEntityActionsColumn TItem="UserRoleHierarchicalStructureDto">
+            <DisplayTemplate>
+                <EntityActions TItem="UserRoleHierarchicalStructureDto">
+                    <EntityAction TItem="UserRoleHierarchicalStructureDto"
+                                  Text="@LL["Edit"]"
+                                  Visible=HasUpdatePermission
+                                  Clicked="() => ToUpdatePage(context)" />
+                    <EntityAction TItem="UserRoleHierarchicalStructureDto"
+                                  Text="@LL["Delete"]"
+                                  Visible=HasDeletePermission
+                                  Clicked="() => DeleteEntityAsync(context)"
+                                  ConfirmationMessage="() => GetDeleteConfirmationMessage(context)" />
+                </EntityActions>
+            </DisplayTemplate>
+        </DataGridEntityActionsColumn>
+    </UserRoleHierarchicalStructureSearch>
+    <div class="div-float-buttons">
+        <Button Class="float-end" Color="Color.Primary" Clicked="@ToCreatePage">@LL["Create"]</Button>
+    </div>
+</div>
+
+@namespace NecnatAbp.HierarchyManagement.Pages
+@code {
+
+    public UserRoleHierarchicalStructureListing()
+    {
+        ListingPageUri = "/HierarchyManagement/UserRoleHierarchicalStructure/Listing";
+        CreatePageUri = "/HierarchyManagement/UserRoleHierarchicalStructure/Maintain";
+        UpdatePageUri = "/HierarchyManagement/UserRoleHierarchicalStructure/Maintain";
+
+        CreatePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructure.Create;
+        UpdatePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructure.Update;
+        DeletePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructure.Delete;
+    }
+
+    protected virtual string GetDeleteConfirmationMessage(UserRoleHierarchicalStructureDto entity)
+    {
+        return L["Are you sure you want to delete this record?"];
+    }
+}

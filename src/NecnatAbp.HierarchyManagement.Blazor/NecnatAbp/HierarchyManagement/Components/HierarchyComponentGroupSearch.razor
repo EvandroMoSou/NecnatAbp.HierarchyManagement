@@ -1,0 +1,93 @@
+﻿@using Microsoft.Extensions.Localization
+@using NecnatAbp.Components
+@using NecnatAbp.ComponentBases
+@using NecnatAbp.Enums
+@using NecnatAbp.HierarchyManagement
+@using Volo.Abp.Application.Dtos
+@using global::NecnatAbp.HierarchyManagement.Localization
+@inherits SearchComponentBase<IHierarchyComponentGroupAppService, HierarchyComponentGroupDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateHierarchyComponentGroupDto, HierarchyComponentGroupResultRequestDto>
+@inject IStringLocalizer<HierarchyManagementResource> LL
+
+<Accordion>
+    <Collapse Visible="true">
+        <CollapseHeader>
+            <Heading Size="HeadingSize.Is4">
+                <AccordionToggle>@LL["Filter(s)"]</AccordionToggle>
+            </Heading>
+        </CollapseHeader>
+        <CollapseBody>
+            <Fields>
+                <Field ColumnSize="ColumnSize.Is10">
+                    <FieldLabel>@LL["Name"]</FieldLabel>
+                    <TextEdit @bind-Text="SearchInput.NameContains">
+                        <Feedback>
+                            <ValidationError />
+                        </Feedback>
+                    </TextEdit>
+                </Field>
+                <Field ColumnSize="ColumnSize.Is2.OnDesktop">
+                    <FieldLabel>@LL["IsActive"]</FieldLabel>
+                    <TriStateCheck @bind-Checked="@SearchInput.IsActive" />
+                </Field>
+            </Fields>
+            <div class="div-float-buttons">
+                <Button Class="float-end" Color="Color.Primary" Clicked="@GetEntitiesAsync">@LL["Search"]</Button>
+                <Button Class="float-start" Color="Color.Secondary" Outline Clicked="@ClearAsync">@LL["Clear"]</Button>
+             </div>
+         </CollapseBody>
+     </Collapse>
+ </Accordion>
+ <br />
+ <Card>
+     <CardBody>
+         <DataGrid TItem="HierarchyComponentGroupDto"
+                   Data="Entities"
+                   ReadData="@OnDataGridReadAsync"
+                   TotalItems="TotalCount"
+                   ShowPager="true"
+                   PageSize="PageSize"
+                   SelectionMode="SelectionMode == NnDataGridSelectionMode.Multiple ? DataGridSelectionMode.Multiple : DataGridSelectionMode.Single"
+         @bind-SelectedRow="SelectedRow"
+         @bind-SelectedRows="SelectedRows">
+             <DataGridColumns>
+                 @if (SelectionMode == NnDataGridSelectionMode.Multiple)
+                {
+                    <DataGridCheckColumn Width="30px" Sortable="false" Filterable="false">
+                        <CaptionTemplate>
+                            <Check TValue="bool"
+                                   Checked="@(SelectedRows != null && SelectedRows.Count == TotalCount)"
+                                   Indeterminate="@(SelectedRows != null && SelectedRows.Count > 0 && SelectedRows.Count != TotalCount)"
+                                   CheckedChanged="SelectAllAsync" />
+                        </CaptionTemplate>
+                        <DisplayTemplate>
+                            <Check TValue="bool" Checked="@(SelectedRows != null && SelectedRows.Contains(context!))" Disabled="true" ReadOnly="true" />
+                        </DisplayTemplate>
+                    </DataGridCheckColumn>
+                }
+                else if (SelectionMode == NnDataGridSelectionMode.Single)
+                {
+                    <DataGridCheckColumn Width="30px" Sortable="false" Filterable="false">
+                        <DisplayTemplate>
+                            <Check TValue="bool" Checked="@(SelectedRow == context)" Disabled="true" ReadOnly="true" />
+                        </DisplayTemplate>
+                    </DataGridCheckColumn>
+                }
+                <DataGridColumn TItem="HierarchyComponentGroupDto"
+                                Field="@nameof(HierarchyComponentGroupDto.Name)"
+                                Caption="@LL["Name"]"></DataGridColumn>
+                <DataGridCheckColumn TItem="HierarchyComponentGroupDto"
+                                     Field="@nameof(HierarchyComponentGroupDto.IsActive)"
+                                     Caption="@LL["IsActive"]"></DataGridCheckColumn>
+                @ChildContent
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@namespace NecnatAbp.HierarchyManagement.Components
+@code {
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+}

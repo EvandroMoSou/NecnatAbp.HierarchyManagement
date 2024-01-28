@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>NecnatAbp.HierarchyManagement</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\NecnatAbp.HierarchyManagement.Domain\NecnatAbp.HierarchyManagement.Domain.csproj" />
+    <ProjectReference Include="..\NecnatAbp.HierarchyManagement.TestBase\NecnatAbp.HierarchyManagement.TestBase.csproj" />
+  </ItemGroup>
+
+
+</Project>

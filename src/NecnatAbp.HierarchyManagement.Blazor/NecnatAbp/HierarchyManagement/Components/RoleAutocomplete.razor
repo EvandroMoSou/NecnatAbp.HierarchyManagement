@@ -1,0 +1,42 @@
+﻿@using Blazorise;
+@using Blazorise.Components;
+@using Microsoft.Extensions.Localization
+@using NecnatAbp.ComponentBases
+@using NecnatAbp.HierarchyManagement
+@using Volo.Abp.Identity
+@using global::NecnatAbp.HierarchyManagement.Localization
+@inject IStringLocalizer<HierarchyManagementResource> LL
+@inherits AutocompleteComponentBase<IdentityRoleDto, Guid, INecnatRoleAppService, NecnatRoleResultRequestDto>
+
+@if (IsLoading)
+{
+    <div class="spinner-page">
+        <div class="spinner-container">
+            <div class="spinner">
+                <div class="double-bounce1"></div>
+                <div class="double-bounce2"></div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <Autocomplete TItem="IdentityRoleDto"
+                  TValue="IdentityRoleDto"
+                  Data="@ReadData"
+                  ReadData="@OnHandleReadData"
+                  TextField="@((item) => item.Name)"
+                  ValueField="@((item) => item)"
+                  SelectedValue="@SelectedValue"
+                  SelectedValueChanged="@SelectedValueChanged"
+                  Placeholder="@LL["Enter at least 3 letters to start the search..."]"
+                  Disabled="@Disabled"
+                  Validator="Validator!">
+        <NotFoundContent> @LL["Sorry..."] @context @LL["was not found!"] </NotFoundContent>
+    </Autocomplete>
+}
+
+@namespace NecnatAbp.HierarchyManagement.Components
+@code {
+
+}
