@@ -9,7 +9,7 @@
 @using Volo.Abp.BlazoriseUI.Components
 @using global::NecnatAbp.HierarchyManagement.Localization
 @inject IStringLocalizer<HierarchyManagementResource> LL
-@attribute [Authorize(HierarchyManagementPermissions.UserRoleHierarchicalStructure.Default)]
+@attribute [Authorize(HierarchyManagementPermissions.UserRoleHierarchicalStructures.Default)]
 @inherits ListingPageBase<UserRoleHierarchicalStructureSearch, IUserRoleHierarchicalStructureAppService, UserRoleHierarchicalStructureDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateUserRoleHierarchicalStructureDto, UserRoleHierarchicalStructureResultRequestDto>
 
 <div class="container">
@@ -45,9 +45,9 @@
         CreatePageUri = "/HierarchyManagement/UserRoleHierarchicalStructure/Maintain";
         UpdatePageUri = "/HierarchyManagement/UserRoleHierarchicalStructure/Maintain";
 
-        CreatePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructure.Create;
-        UpdatePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructure.Update;
-        DeletePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructure.Delete;
+        CreatePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructures.Create;
+        UpdatePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructures.Update;
+        DeletePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructures.Delete;
     }
 
     protected virtual string GetDeleteConfirmationMessage(UserRoleHierarchicalStructureDto entity)

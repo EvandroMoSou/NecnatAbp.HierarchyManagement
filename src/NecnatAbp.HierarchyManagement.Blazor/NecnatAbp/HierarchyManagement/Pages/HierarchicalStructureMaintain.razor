@@ -104,7 +104,7 @@
                 await CreateValidationsRef.ClearAll();
             }
 
-            await AuthorizationService.CheckAsync(HierarchyManagementPermissions.HierarchicalStructure.Create);
+            await AuthorizationService.CheckAsync(HierarchyManagementPermissions.HierarchicalStructures.Create);
 
             NewEntity = new CreateUpdateHierarchicalStructureDto();
             NewEntity.ParentId = hierarchicalStructureIdPai;
@@ -145,7 +145,7 @@
             }
             if (validate)
             {
-                await AuthorizationService.CheckAsync(HierarchyManagementPermissions.HierarchicalStructure.Create);
+                await AuthorizationService.CheckAsync(HierarchyManagementPermissions.HierarchicalStructures.Create);
 
                 NewEntity!.HierarchyId = selectedHierarchy!.Id;
                 NewEntity.HierarchyComponentType = (int)hierarchyComponent.HierarchyComponentType!;
@@ -186,7 +186,7 @@
         {
             try
             {
-                await AuthorizationService.CheckAsync(HierarchyManagementPermissions.HierarchicalStructure.Delete);
+                await AuthorizationService.CheckAsync(HierarchyManagementPermissions.HierarchicalStructures.Delete);
                 await AppService.DeleteAsync(id);
 
                 await hierarchicalStructureTreeRef!.RefreshAsync();

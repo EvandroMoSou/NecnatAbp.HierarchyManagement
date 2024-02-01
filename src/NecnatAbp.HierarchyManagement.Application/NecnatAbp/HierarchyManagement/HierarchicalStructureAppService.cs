@@ -21,10 +21,10 @@ namespace NecnatAbp.HierarchyManagement
     {
         public HierarchicalStructureAppService(IHierarchicalStructureRepository repository) : base(repository)
         {
-            GetPolicyName = HierarchyManagementPermissions.HierarchicalStructure.Default;
-            GetListPolicyName = HierarchyManagementPermissions.HierarchicalStructure.Default;
-            CreatePolicyName = HierarchyManagementPermissions.HierarchicalStructure.Create;
-            DeletePolicyName = HierarchyManagementPermissions.HierarchicalStructure.Delete;
+            GetPolicyName = HierarchyManagementPermissions.HierarchicalStructures.Default;
+            GetListPolicyName = HierarchyManagementPermissions.HierarchicalStructures.Default;
+            CreatePolicyName = HierarchyManagementPermissions.HierarchicalStructures.Create;
+            DeletePolicyName = HierarchyManagementPermissions.HierarchicalStructures.Delete;
         }
 
         protected override async Task<IQueryable<HierarchicalStructure>> CreateFilteredQuerySearchAsync(HierarchicalStructureResultRequestDto input)

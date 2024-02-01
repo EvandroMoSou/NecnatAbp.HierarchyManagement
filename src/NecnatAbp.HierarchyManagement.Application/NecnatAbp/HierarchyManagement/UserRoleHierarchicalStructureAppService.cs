@@ -38,18 +38,18 @@ namespace NecnatAbp.HierarchyManagement
             UserRoleRepository = userRoleRepository;
             HierarchicalStructureRepository = hierarchicalStructureRepository;
 
-            GetPolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructure.Default;
-            GetListPolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructure.Default;
-            CreatePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructure.Create;
-            UpdatePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructure.Update;
-            DeletePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructure.Delete;
+            GetPolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructures.Default;
+            GetListPolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructures.Default;
+            CreatePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructures.Create;
+            UpdatePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructures.Update;
+            DeletePolicyName = HierarchyManagementPermissions.UserRoleHierarchicalStructures.Delete;
         }
 
         protected override async Task<IQueryable<UserRoleHierarchicalStructure>> CreateFilteredQueryAsync(PagedAndSortedResultRequestDto input)
         {
             var q = await base.CreateFilteredQueryAsync(input);
 
-            var lHierarchicalStructureId = await HierarchyAuthRepository.SearchHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructure.Default);
+            var lHierarchicalStructureId = await HierarchyAuthRepository.SearchHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructures.Default);
             q = q.Where(x => lHierarchicalStructureId.Contains(x.HierarchicalStructureId));
 
             return q;
@@ -68,7 +68,7 @@ namespace NecnatAbp.HierarchyManagement
             if (input.HierarchicalStructureId != null)
                 q = q.Where(x => x.HierarchicalStructureId == input.HierarchicalStructureId);
 
-            var lHierarchicalStructureId = await HierarchyAuthRepository.SearchHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructure.Default);
+            var lHierarchicalStructureId = await HierarchyAuthRepository.SearchHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructures.Default);
             q = q.Where(x => lHierarchicalStructureId.Contains(x.HierarchicalStructureId));
 
             return q;
@@ -78,7 +78,7 @@ namespace NecnatAbp.HierarchyManagement
         {
             var e = await base.GetAsync(id);
 
-            await HierarchyAuthRepository.CheckByHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructure.Default, e.HierarchicalStructureId);
+            await HierarchyAuthRepository.CheckByHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructures.Default, e.HierarchicalStructureId);
 
             return e;
         }
@@ -98,7 +98,7 @@ namespace NecnatAbp.HierarchyManagement
 
         public override async Task<UserRoleHierarchicalStructureDto> CreateAsync(CreateUpdateUserRoleHierarchicalStructureDto input)
         {
-            await HierarchyAuthRepository.CheckByHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructure.Create, input.HierarchicalStructureId);
+            await HierarchyAuthRepository.CheckByHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructures.Create, input.HierarchicalStructureId);
 
             var lUserRole = await UserRoleRepository.GetListAsync(x => x.UserId == input.UserId && x.RoleId == input.RoleId);
             if (!lUserRole.Any())
@@ -116,9 +116,9 @@ namespace NecnatAbp.HierarchyManagement
         public override async Task<UserRoleHierarchicalStructureDto> UpdateAsync(Guid id, CreateUpdateUserRoleHierarchicalStructureDto input)
         {
             var e = await Repository.GetAsync(id);
-            await HierarchyAuthRepository.CheckByHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructure.Update, e.HierarchicalStructureId);
+            await HierarchyAuthRepository.CheckByHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructures.Update, e.HierarchicalStructureId);
             if (e.HierarchicalStructureId != input.HierarchicalStructureId)
-                await HierarchyAuthRepository.CheckByHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructure.Update, input.HierarchicalStructureId);
+                await HierarchyAuthRepository.CheckByHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructures.Update, input.HierarchicalStructureId);
 
             if (e.RoleId != input.RoleId)
             {
@@ -148,7 +148,7 @@ namespace NecnatAbp.HierarchyManagement
         public override async Task DeleteAsync(Guid id)
         {
             var e = await Repository.GetAsync(id);
-            await HierarchyAuthRepository.CheckByHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructure.Delete, e.HierarchicalStructureId);
+            await HierarchyAuthRepository.CheckByHierarchicalStructureIdAsync((Guid)CurrentUser.Id!, HierarchyManagementPermissions.UserRoleHierarchicalStructures.Delete, e.HierarchicalStructureId);
 
             var lUserRole = await UserRoleRepository.GetListAsync(x => x.UserId == e.UserId && x.RoleId == e.RoleId);
             if (lUserRole.Count() == 1)

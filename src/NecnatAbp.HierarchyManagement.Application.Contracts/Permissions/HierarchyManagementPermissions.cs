@@ -6,32 +6,32 @@ public class HierarchyManagementPermissions
 {
     public const string GroupName = "HierarchyManagement";
 
-    public static class Hierarchy
+    public static class Hierarchies
     {
-        public const string Default = GroupName + ".Hierarchy";
+        public const string Default = GroupName + ".Hierarchies";
         public const string Create = Default + ".Create";
         public const string Update = Default + ".Update";
         public const string Delete = Default + ".Delete";
     }
 
-    public static class HierarchyComponentGroup
+    public static class HierarchyComponentGroups
     {
-        public const string Default = GroupName + ".HierarchyComponentGroup";
+        public const string Default = GroupName + ".HierarchyComponentGroups";
         public const string Create = Default + ".Create";
         public const string Update = Default + ".Update";
         public const string Delete = Default + ".Delete";
     }
 
-    public static class HierarchicalStructure
+    public static class HierarchicalStructures
     {
-        public const string Default = GroupName + ".HierarchicalStructure";
+        public const string Default = GroupName + ".HierarchicalStructures";
         public const string Create = Default + ".Create";
         public const string Delete = Default + ".Delete";
     }
 
-    public static class UserRoleHierarchicalStructure
+    public static class UserRoleHierarchicalStructures
     {
-        public const string Default = GroupName + ".UserRoleHierarchicalStructure";
+        public const string Default = GroupName + ".UserRoleHierarchicalStructures";
         public const string Create = Default + ".Create";
         public const string Update = Default + ".Update";
         public const string Delete = Default + ".Delete";

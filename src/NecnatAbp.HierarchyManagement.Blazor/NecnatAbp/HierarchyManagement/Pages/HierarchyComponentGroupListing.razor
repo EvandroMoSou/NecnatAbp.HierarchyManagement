@@ -9,7 +9,7 @@
 @using Volo.Abp.BlazoriseUI.Components
 @using global::NecnatAbp.HierarchyManagement.Localization
 @inject IStringLocalizer<HierarchyManagementResource> LL
-@attribute [Authorize(HierarchyManagementPermissions.HierarchyComponentGroup.Default)]
+@attribute [Authorize(HierarchyManagementPermissions.HierarchyComponentGroups.Default)]
 @inherits ListingPageBase<HierarchyComponentGroupSearch, IHierarchyComponentGroupAppService, HierarchyComponentGroupDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateHierarchyComponentGroupDto, HierarchyComponentGroupResultRequestDto>
 
 <div class="container">
@@ -45,9 +45,9 @@
         CreatePageUri = "/HierarchyManagement/HierarchyComponentGroup/Maintain";
         UpdatePageUri = "/HierarchyManagement/HierarchyComponentGroup/Maintain";
 
-        CreatePolicyName = HierarchyManagementPermissions.HierarchyComponentGroup.Create;
-        UpdatePolicyName = HierarchyManagementPermissions.HierarchyComponentGroup.Update;
-        DeletePolicyName = HierarchyManagementPermissions.HierarchyComponentGroup.Delete;
+        CreatePolicyName = HierarchyManagementPermissions.HierarchyComponentGroups.Create;
+        UpdatePolicyName = HierarchyManagementPermissions.HierarchyComponentGroups.Update;
+        DeletePolicyName = HierarchyManagementPermissions.HierarchyComponentGroups.Delete;
     }
 
     protected virtual string GetDeleteConfirmationMessage(HierarchyComponentGroupDto entity)

@@ -8,7 +8,7 @@
 @using Volo.Abp.Application.Dtos
 @using Volo.Abp.BlazoriseUI.Components
 @using global::NecnatAbp.HierarchyManagement.Localization
-@attribute [Authorize(HierarchyManagementPermissions.Hierarchy.Default)]
+@attribute [Authorize(HierarchyManagementPermissions.Hierarchies.Default)]
 @inherits ListingPageBase<HierarchySearch, IHierarchyAppService, HierarchyDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateHierarchyDto, HierarchyResultRequestDto>
 @inject IStringLocalizer<HierarchyManagementResource> LL
 
@@ -45,9 +45,9 @@
         CreatePageUri = "/HierarchyManagement/Hierarchy/Maintain";
         UpdatePageUri = "/HierarchyManagement/Hierarchy/Maintain";
 
-        CreatePolicyName = HierarchyManagementPermissions.Hierarchy.Create;
-        UpdatePolicyName = HierarchyManagementPermissions.Hierarchy.Update;
-        DeletePolicyName = HierarchyManagementPermissions.Hierarchy.Delete;
+        CreatePolicyName = HierarchyManagementPermissions.Hierarchies.Create;
+        UpdatePolicyName = HierarchyManagementPermissions.Hierarchies.Update;
+        DeletePolicyName = HierarchyManagementPermissions.Hierarchies.Delete;
     }
 
     protected virtual string GetDeleteConfirmationMessage(HierarchyDto entity)

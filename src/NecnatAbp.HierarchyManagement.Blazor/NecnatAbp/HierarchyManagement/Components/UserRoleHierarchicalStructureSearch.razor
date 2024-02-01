@@ -197,7 +197,7 @@
     protected async Task LoadSupportListsAsync()
     {
         await HierarchyAutorizationService.InitializeAsync();
-        _allowedHierarchicalStructureIdList = HierarchyAutorizationService.AllowedHierarchicalStructureIdList(HierarchyManagementPermissions.UserRoleHierarchicalStructure.Default);
+        _allowedHierarchicalStructureIdList = HierarchyAutorizationService.AllowedHierarchicalStructureIdList(HierarchyManagementPermissions.UserRoleHierarchicalStructures.Default);
 
         if (RoleSupportList == null)
             RoleSupportList = (await ((ICrudsAppService<IdentityRoleDto, Guid, PagedAndSortedResultRequestDto, IdentityRoleDto, NecnatRoleResultRequestDto>)RoleAppService).SearchAsync(new NecnatRoleResultRequestDto { IsPaged = false })).Items.ToList();

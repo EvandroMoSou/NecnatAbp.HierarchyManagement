@@ -19,11 +19,11 @@ namespace NecnatAbp.HierarchyManagement
     {
         public HierarchyComponentGroupAppService(IHierarchyComponentGroupRepository repository) : base(repository)
         {
-            GetPolicyName = HierarchyManagementPermissions.HierarchyComponentGroup.Default;
-            GetListPolicyName = HierarchyManagementPermissions.HierarchyComponentGroup.Default;
-            CreatePolicyName = HierarchyManagementPermissions.HierarchyComponentGroup.Create;
-            UpdatePolicyName = HierarchyManagementPermissions.HierarchyComponentGroup.Update;
-            DeletePolicyName = HierarchyManagementPermissions.HierarchyComponentGroup.Delete;
+            GetPolicyName = HierarchyManagementPermissions.HierarchyComponentGroups.Default;
+            GetListPolicyName = HierarchyManagementPermissions.HierarchyComponentGroups.Default;
+            CreatePolicyName = HierarchyManagementPermissions.HierarchyComponentGroups.Create;
+            UpdatePolicyName = HierarchyManagementPermissions.HierarchyComponentGroups.Update;
+            DeletePolicyName = HierarchyManagementPermissions.HierarchyComponentGroups.Delete;
         }
 
         protected override async Task<IQueryable<HierarchyComponentGroup>> CreateFilteredQuerySearchAsync(HierarchyComponentGroupResultRequestDto input)

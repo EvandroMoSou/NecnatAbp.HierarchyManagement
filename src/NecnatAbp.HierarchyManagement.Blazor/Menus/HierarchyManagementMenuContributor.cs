@@ -28,7 +28,7 @@ public class HierarchyManagementMenuContributor : IMenuContributor
             icon: "fas fa-sitemap"
         );
 
-        if (await context.IsGrantedAsync(HierarchyManagementPermissions.Hierarchy.Default))
+        if (await context.IsGrantedAsync(HierarchyManagementPermissions.Hierarchies.Default))
         {
             menu.AddItem(new ApplicationMenuItem(
                 HierarchyManagementMenus.Hierarchy,
@@ -38,7 +38,7 @@ public class HierarchyManagementMenuContributor : IMenuContributor
             ));
         }
 
-        if (await context.IsGrantedAsync(HierarchyManagementPermissions.HierarchyComponentGroup.Default))
+        if (await context.IsGrantedAsync(HierarchyManagementPermissions.HierarchyComponentGroups.Default))
         {
             menu.AddItem(new ApplicationMenuItem(
                 HierarchyManagementMenus.HierarchyComponentGroup,
@@ -48,7 +48,7 @@ public class HierarchyManagementMenuContributor : IMenuContributor
             ));
         }
 
-        if (await context.IsGrantedAsync(HierarchyManagementPermissions.HierarchicalStructure.Default))
+        if (await context.IsGrantedAsync(HierarchyManagementPermissions.HierarchicalStructures.Default))
         {
             menu.AddItem(new ApplicationMenuItem(
                 HierarchyManagementMenus.HierarchicalStructure,
@@ -58,7 +58,7 @@ public class HierarchyManagementMenuContributor : IMenuContributor
             ));
         }
 
-        if (await context.IsGrantedAsync(HierarchyManagementPermissions.UserRoleHierarchicalStructure.Default))
+        if (await context.IsGrantedAsync(HierarchyManagementPermissions.UserRoleHierarchicalStructures.Default))
         {
             menu.AddItem(new ApplicationMenuItem(
                 HierarchyManagementMenus.UserRoleHierarchicalStructure,
